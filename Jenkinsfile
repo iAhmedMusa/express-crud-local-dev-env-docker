@@ -1,23 +1,39 @@
-pipeline {
-    agent any
-    stages {
-      stage("build") {
-        steps {
-              echo 'Building the app...'
-        }
-      }
+pipeline{
 
-      stage("test") {
-        steps {
-              echo 'testing the app...'
-        }
-      }
+	agent any
 
-      stage("deploy") {
-        steps {
-              echo 'deploying the app...'
-        }
-      }
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('Docker_hub_creds')
+	}
 
-    }
-  }
+	stages {
+
+		stage('Build') {
+
+			steps {
+				sh 'docker build -t ahmedmusa/express-crud-mongo:latest ./app'
+			}
+		}
+
+		stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
+
+		stage('Push') {
+
+			steps {
+				sh 'docker push ahmedmusa/express-crud-mongo:latest'
+			}
+		}
+	}
+
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+
+}
