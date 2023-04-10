@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+	agent { label 'docker-agent-alpine' }
+
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('docker_hub_creds')
+	}
     stages {
       stage("build") {
         steps {
