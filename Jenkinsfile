@@ -8,7 +8,7 @@ pipeline {
       stage("build") {
         steps {
               echo 'Building the app...'
-              sh 'docker --version'
+              sh 'docker version'
               // sh 'docker build -t ahmedmusa/express-crud-mongo:latest ./app'
         }
       }
