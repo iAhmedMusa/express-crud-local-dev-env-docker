@@ -1,5 +1,5 @@
 pipeline {
-	agent { label 'docker-agent-alpine' }
+	agent any
 
 	environment {
 		DOCKERHUB_CREDENTIALS=credentials('docker_hub_creds')
