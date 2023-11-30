@@ -9,17 +9,14 @@ services:
       - MONGODB_ADMINPASSWORD=password
       - DB_NAME=basicDB
     ports:
-      - "8700:3000"
+      - "3000:3000"
     depends_on:
       - mongodb
-    # working_dir: /root/app
-    # volumes:
-    #   - ./app:/root/app:cached
 
   mongodb:
     image: mongo
     ports:
-      - 7233:27017
+      - 27017:27017
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
@@ -31,7 +28,7 @@ services:
     depends_on:
       - mongodb
     ports:
-      - 7234:8081
+      - 8081:8081
     environment:
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
       - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
