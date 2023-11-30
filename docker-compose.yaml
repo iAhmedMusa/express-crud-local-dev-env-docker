@@ -3,30 +3,33 @@ version: "3.8"
 services:
   frontend:
     build: ./app
-    command: sh -c "npm install && npm start"
     environment:
-      - NODE_ENV=development
-      - PORT=3000
+      - MONGODB_SERVER=mongodb
+      - MONGODB_ADMINUSERNAME=admin
+      - MONGODB_ADMINPASSWORD=password
+      - DB_NAME=basicDB
     ports:
       - "8700:3000"
-    working_dir: /root/app
-    volumes:
-      - ./app:/root/app:cached
+    depends_on:
+      - mongodb
+    # working_dir: /root/app
+    # volumes:
+    #   - ./app:/root/app:cached
 
-  mongodb: #--name
-    image: mongo #--image
-    restart: always
+  mongodb:
+    image: mongo
     ports:
       - 7233:27017
     environment:
       - MONGO_INITDB_ROOT_USERNAME=admin
       - MONGO_INITDB_ROOT_PASSWORD=password
     volumes:
-      - app-data:/data/db
+      - mongo-data:/data/db
 
   mongo-gui:
     image: mongo-express
-    restart: always
+    depends_on:
+      - mongodb
     ports:
       - 7234:8081
     environment:
@@ -34,7 +37,6 @@ services:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
       - ME_CONFIG_MONGODB_ADMINPASSWORD=password
       - ME_CONFIG_MONGODB_SERVER=mongodb
-
 volumes:
-  app-data:
+  mongo-data:
     driver: "local"

@@ -1,17 +1,22 @@
 const express = require("express");
 const bodyParser = require("body-parser")
 const app = express()
-const server = 'http://127.0.0.1'
-const port = 3000
 const MongoClient = require("mongodb").MongoClient;
 let ObjectId = require("mongodb").ObjectID;
 
+// MongoDB config
+const db_server = process.env.MONGODB_SERVER
+const db_user = process.env.MONGODB_ADMINUSERNAME
+const db_password = process.env.MONGODB_ADMINPASSWORD
+
+const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
-    console.log(`System listening at ${server}:${port}`);
+    console.log(`System listening on :${port}`);
 });
 
-const url = "mongodb://admin:password@mongodb:27017";
-const dbName = "mongoprac";
+const url = `mongodb://${db_user}:${db_password}@${db_server}:27017`;
+const dbName = process.env.DB_NAME;
 let db;
 
 MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
