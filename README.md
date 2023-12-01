@@ -2,7 +2,7 @@
 
 ## Overview
 
-This is a simple CRUD (Create, Read, Update, Delete) application built with Expressjs and MongoDB. The application is dockerized, allowing for easy deployment and scalability. The application can be configured using environment variables. A Docker Compose file are given there.
+This is a simple CRUD (Create, Read, Update, Delete) application built with Expressjs and MongoDB. The application is dockerized, allowing for easy deployment and scalability. The application can be configured using environment variables. A Docker Compose file is given here.
 
 ### Features
 
@@ -27,10 +27,10 @@ Before running the application, make sure you have the following installed:
 2. Set environment variables in the ``docker-compose`` file with the following content:
 
    ```env
-   - MONGODB_SERVER=localhost
+   - MONGODB_SERVER=mongodb
    - MONGODB_ADMINUSERNAME=admin
    - MONGODB_ADMINPASSWORD=password
-   - DB_NAME=test_DB
+   - DB_NAME=basicDB
    ```
 
    Update the values according to your preferences.
