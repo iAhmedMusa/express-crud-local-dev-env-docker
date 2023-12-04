@@ -1,5 +1,5 @@
-FROM node:16-alpine
-#Install some dependencies
+FROM node:18-alpine
+
 WORKDIR /usr/app
 COPY package*.json .
 RUN npm install
@@ -9,5 +9,5 @@ ENV MONGODB_SERVER=localhost \
     MONGODB_ADMINPASSWORD=password \
     DB_NAME=testDB
 EXPOSE 3000
-# Set up a default command
+
 CMD [ "npm","start" ]
