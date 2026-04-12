@@ -8,7 +8,7 @@ services:
       - "coolify.managed=true"
       - "coolify.proxy.port=3000"
       - "traefik.enable=true"
-      - "traefik.http.routers.frontend.rule=Host(`focusdigitalcolorlab.com`)"
+      - "traefik.http.routers.frontend.rule=Host(`focusdigitalcolorlab.com`)|| Host(`www.focusdigitalcolorlab.com`)"
       - "traefik.http.routers.frontend.entrypoints=websecure"
       - "traefik.http.routers.frontend.tls=true"
     environment:
