@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./app
+    # Coolify uses labels for domain routing
+    labels:
+      - "coolify.managed=true"
+      - "coolify.proxy.port=3000"
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`focusdigitalcolorlab.com`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+    environment:
+      - MONGODB_SERVER=mongodb
+      - MONGODB_ADMINUSERNAME=${MONGODB_ADMINUSERNAME:-admin}
+      - MONGODB_ADMINPASSWORD=${MONGODB_ADMINPASSWORD:-password}
+      - DB_NAME=basicDB
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    # Removed host port mapping for security; accessible internally by 'mongodb'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMINUSERNAME:-admin}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMINPASSWORD:-password}
+    volumes:
+      - mongo-data:/data/db
+
+  mongo-gui:
+    image: mongo-express
+    depends_on:
+      - mongodb
+    labels:
+      - "coolify.managed=true"
+      - "coolify.proxy.port=8081"
+      - "traefik.enable=true"
+      - "traefik.http.routers.mongo-gui.rule=Host(`staging.focusdigitalcolorlab.com`)"
+      - "traefik.http.routers.mongo-gui.entrypoints=websecure"
+      - "traefik.http.routers.mongo-gui.tls=true"
+    environment:
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ADMINUSERNAME:-admin}
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_ADMINPASSWORD:-password}
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+
+volumes:
+  mongo-data:
+    driver: local
