@@ -11,6 +11,8 @@ const db_password = process.env.MONGODB_ADMINPASSWORD
 
 const port = process.env.PORT || 3000;
 
+app.get("/health", (req, res) => res.sendStatus(200));
+
 app.listen(port, () => {
     console.log(`System listening on :${port}`);
 });
