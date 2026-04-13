@@ -1,95 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <title>Express CRUD</title>
-    <!-- Required meta tags -->
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .table {
+            margin-bottom: 0;
+        }
+        .action-buttons .btn {
+            margin-right: 4px;
+        }
+        @media (max-width: 576px) {
+            .action-buttons {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+            .action-buttons .btn {
+                margin-right: 0;
+                margin-bottom: 4px;
+            }
+        }
+    </style>
+</head>
 
-    <!-- Bootstrap CSS -->
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-      crossorigin="anonymous"
-    />
-  </head>
-
-  <body>
-    <div class="col-6 mt-5 mx-auto">
-      <div class="card border-primary">
-        <div class="card-body">
-          <h4 class="card-title">Person's Information</h4>
-          <form action="/insert" method="post">
-            <div class="form-group">
-              <label for="name">Name: </label>
-              <input
-                type="text"
-                name="name"
-                id="name"
-                class="form-control"
-                placeholder=""
-                aria-describedby="helpId"
-                required
-              />
-              <small id="helpId" class="text-muted">Provide your Name</small>
-            </div>
-
-            <div class="form-group">
-              <label for="phone">Phone: </label>
-              <input
-                type="text"
-                name="phone"
-                id="phone"
-                class="form-control"
-                placeholder=""
-                aria-describedby="helpId"
-                required
-              />
-              <small id="helpId" class="text-muted">Provide Phone</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary btn-block">
-              Create Data
-            </button>
-          </form>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1">Express CRUD</span>
         </div>
-      </div>
+    </nav>
 
-      <!-- <%= output %> -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6 mb-4">
+                <div class="card border-primary">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-4 text-primary">Create Person</h4>
+                        <form action="/insert" method="post">
+                            <div class="form-group">
+                                <label for="name"><strong>Name:</strong></label>
+                                <input type="text" name="name" id="name" class="form-control" required />
+                                <small class="text-muted">Provide your Name</small>
+                            </div>
 
-      <div class="mt-2">
-        <div class="card border-secondary">
-          <div class="card-body">
-            <h4 class="card-title">Persons</h4>
-            <table class="table table-striped">
-              <thead class="thead-dark">
-                <tr>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
+                            <div class="form-group">
+                                <label for="phone"><strong>Phone:</strong></label>
+                                <input type="text" name="phone" id="phone" class="form-control" required />
+                                <small class="text-muted">Provide Phone</small>
+                            </div>
 
-              <% for(let i = 0; i < output.length; i++) {%>
-              <tbody>
-                <tr>
-                  <td><%= output[i].name %></td>
-                  <td><%= output[i].phone %></td>
-                  <td>
-                    <a href="/create/<%= output[i]._id %>">Edit</a>
-                    <a href="/delete/<%= output[i]._id %>">Delete</a>
-                  </td>
-                </tr>
-              </tbody>
-              <% } %>
-            </table>
-          </div>
+                            <button type="submit" class="btn btn-primary btn-block">Create Data</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-10 col-lg-8">
+                <div class="card border-secondary">
+                    <div class="card-body p-4">
+                        <h4 class="card-title mb-3">Persons</h4>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for(let i = 0; i < output.length; i++) {%>
+                                    <tr>
+                                        <td><%= output[i].name %></td>
+                                        <td><%= output[i].phone %></td>
+                                        <td class="action-buttons">
+                                            <a href="/create/<%= output[i]._id %>" class="btn btn-sm btn-outline-primary">Edit</a>
+                                            <a href="/delete/<%= output[i]._id %>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">Delete</a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  </body>
+</body>
 </html>
