@@ -1,28 +1,7 @@
 services:
   frontend:
     build: ./app
-    networks:
-      - coolify
-    labels:
-      - "traefik.enable=true"
-
-      # ── HTTP router (redirect to HTTPS) ──────────────────────────────────
-      - "traefik.http.routers.frontend-http.rule=Host(`focusdigitalcolorlab.com`) || Host(`www.focusdigitalcolorlab.com`)"
-      - "traefik.http.routers.frontend-http.entrypoints=web"
-      - "traefik.http.routers.frontend-http.middlewares=redirect-to-https"
-
-      # ── HTTPS router ─────────────────────────────────────────────────────
-      - "traefik.http.routers.frontend.rule=Host(`focusdigitalcolorlab.com`) || Host(`www.focusdigitalcolorlab.com`)"
-      - "traefik.http.routers.frontend.entrypoints=websecure"
-      - "traefik.http.routers.frontend.tls=true"
-      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
-
-      # ── Service (tell Traefik which port the container listens on) ────────
-      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
-
-      # ── Shared middleware: HTTP → HTTPS redirect ──────────────────────────
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
-      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+    container_name: frontend
     environment:
       - MONGODB_SERVER=mongodb
       - MONGODB_ADMINUSERNAME=${MONGODB_ADMINUSERNAME:-admin}
@@ -39,45 +18,35 @@ services:
 
   mongodb:
     image: mongo
-    networks:
-      - coolify
+    container_name: mongodb
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ADMINUSERNAME:-admin}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ADMINPASSWORD:-password}
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   mongo-gui:
     image: mongo-express
-    networks:
-      - coolify
+    container_name: mongo-gui
     depends_on:
       - mongodb
-    labels:
-      - "traefik.enable=true"
-
-      # ── HTTPS router ─────────────────────────────────────────────────────
-      - "traefik.http.routers.mongo-gui.rule=Host(`staging.focusdigitalcolorlab.com`)"
-      - "traefik.http.routers.mongo-gui.entrypoints=websecure"
-      - "traefik.http.routers.mongo-gui.tls=true"
-      - "traefik.http.routers.mongo-gui.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.mongo-gui.middlewares=mongo-gui-auth"
-
-      # ── Service ───────────────────────────────────────────────────────────
-      - "traefik.http.services.mongo-gui.loadbalancer.server.port=8081"
-
-      # ── Basic-auth middleware (generate with: htpasswd -nb user pass) ─────
-      # Replace the value below with your own htpasswd hash
-      - "traefik.http.middlewares.mongo-gui-auth.basicauth.users=${MONGO_GUI_BASICAUTH_USERS}"
     environment:
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ADMINUSERNAME:-admin}
       - ME_CONFIG_MONGODB_ADMINPASSWORD=${MONGODB_ADMINPASSWORD:-password}
       - ME_CONFIG_MONGODB_SERVER=mongodb
-
-networks:
-  coolify:
-    external: true
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8081"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
 volumes:
   mongo-data:
