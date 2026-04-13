@@ -8,7 +8,8 @@ services:
       - MONGODB_ADMINPASSWORD=${MONGODB_ADMINPASSWORD:-password}
       - DB_NAME=basicDB
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/health"]
       interval: 30s
@@ -35,7 +36,8 @@ services:
     image: mongo-express
     container_name: mongo-gui
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
     environment:
       - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
       - ME_CONFIG_MONGODB_ADMINUSERNAME=${MONGODB_ADMINUSERNAME:-admin}
